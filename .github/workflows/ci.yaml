@@ -19,6 +19,12 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v4
 
+            - name: Read version
+              id: version
+              run: |
+                VERSION=$(cat VERSION)
+                echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
             - name: Set up Docker Buildx
               uses: docker/setup-buildx-action@v3
 
@@ -35,8 +41,8 @@ jobs:
               with:
                     images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
                     tags: |
-                        type=sha
-                        type=raw,value=latest,enable={{isdefaultbranch}}
+                        type=raw,value=${{ steps.version.outputs.version }}
+                        type=sha,prefix=sha-,format=short
 
             - name: Build and push
               uses: docker/build-push-action@v6
@@ -45,5 +51,9 @@ jobs:
                 push: true
                 tags: ${{ steps.meta.outputs.tags }}
                 labels: ${{ steps.meta.outputs.labels }}
+                build-args: |
+                    APP_VERSION=${{ steps.version.outputs.version }}
+                    GIT_SHA=${{ github.sha }}
+                    BUILD_SOURCE=github_actions
                 cache-from: type=gha
                 cache-to: type=gha,mode=max
