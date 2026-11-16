@@ -45,6 +45,7 @@ jobs:
                         type=sha,prefix=sha-,format=short
 
             - name: Build and push
+              id: build
               uses: docker/build-push-action@v6
               with:
                 context: .
@@ -55,6 +56,33 @@ jobs:
                 build-args: |
                     APP_VERSION=${{ steps.version.outputs.version }}
                     GIT_SHA=${{ github.sha }}
-                    BUILD_SOURCE=github_actions
+                    BUILD_SOURCE=github-actions
                 cache-from: type=gha
                 cache-to: type=gha,mode=max
+
+            - name: Summary
+              env:
+                DIGEST: ${{ steps.build.outputs.digest }}
+                TAGS: ${{ steps.meta.outputs.tags }}
+                VERSION: ${{ steps.version.outputs.version }}
+                IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+              run: |
+                IMAGE="${IMAGE,,}"
+                {
+                  echo "## 🐳 Published Image"
+                  echo ""
+                  echo "| Field | Value |"
+                  echo "|---|---|"
+                  echo "| Image | \`${IMAGE}\` |"
+                  echo "| Version | \`${VERSION}\` |"
+                  echo "| Digest | \`${DIGEST}\` |"
+                  echo ""
+                  echo "### Tags"
+                  echo '```'
+                  echo "${TAGS}"
+                  echo '```'
+                  echo "### Pull by digest (inmutable)"
+                  echo '```bash'
+                  echo "docker pull ${IMAGE}@${DIGEST}"
+                  echo '```'
+                } >> "$GITHUB_STEP_SUMMARY"

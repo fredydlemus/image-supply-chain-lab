@@ -1,14 +1,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: my-app-service
+  name: supply-chain-service
+  namespace: supply-chain
   labels:
-    app: my-app
+    app: supply-chain
 spec:
   selector:
-    app: my-app
+    app: supply-chain
   ports:
     - protocol: TCP
       port: 80
       targetPort: 8080
-  type: NodePort
+  type: ClusterIP

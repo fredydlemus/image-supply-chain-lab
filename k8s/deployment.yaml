@@ -1,28 +1,30 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: my-app-deployment
+  name: supply-chain-deployment
+  namespace: supply-chain
   labels:
-    app: my-app
+    app: supply-chain
 spec:
   replicas: 4
   selector:
     matchLabels:
-      app: my-app
+      app: supply-chain
   template:
     metadata:
       labels:
-        app: my-app
+        app: supply-chain
     spec:
       topologySpreadConstraints:
         - maxSkew: 1
           topologyKey: kubernetes.io/hostname
-          whenUnsatisfiable: ScheduleAnyway
+          whenUnsatisfiable: DoNotSchedule
+          nodeTaintsPolicy: Honor
           labelSelector:
             matchLabels:
-              app: my-app
+              app: supply-chain
       containers:
-        - name: my-app-container
+        - name: supply-chain-container
           image: ghcr.io/fredydlemus/image-supply-chain-lab:1.0.0
           ports:
             - name: http
@@ -57,4 +59,7 @@ spec:
             periodSeconds: 20
           securityContext:
             allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault

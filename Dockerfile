@@ -2,10 +2,9 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-COPY src/ .
+RUN useradd -u 10001 -m appuser
 
-RUN useradd -m appuser && \
-    chown -R appuser:appuser /app
+COPY src/ .
 
 ARG APP_VERSION
 ARG GIT_SHA
@@ -15,7 +14,7 @@ ENV APP_VERSION=${APP_VERSION} \
     GIT_SHA=${GIT_SHA} \
     BUILD_SOURCE=${BUILD_SOURCE}
 
-USER appuser
+USER 10001
 
 EXPOSE 8080
 
