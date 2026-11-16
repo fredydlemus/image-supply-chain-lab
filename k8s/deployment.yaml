@@ -25,7 +25,7 @@ spec:
               app: supply-chain
       containers:
         - name: supply-chain-container
-          image: ghcr.io/fredydlemus/image-supply-chain-lab:1.0.0
+          image: ghcr.io/fredydlemus/image-supply-chain-lab:1.0.1
           ports:
             - name: http
               containerPort: 8080
