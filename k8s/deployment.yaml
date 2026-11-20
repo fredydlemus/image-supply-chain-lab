@@ -25,7 +25,7 @@ spec:
               app: supply-chain
       containers:
         - name: supply-chain-container
-          image: ghcr.io/fredydlemus/image-supply-chain-lab:1.0.1
+          image: ghcr.io/fredydlemus/image-supply-chain-lab:1.0.2@sha256:588025a209bc86568ba4c9adbd543108f28807c7b0c68ee96cb1ed9da3e7ed6b
           ports:
             - name: http
               containerPort: 8080
@@ -51,7 +51,7 @@ spec:
               port: 8080
             initialDelaySeconds: 5
             periodSeconds: 5
-          livenessProbe:           
+          livenessProbe:
             httpGet:
               path: /healthz
               port: 8080
