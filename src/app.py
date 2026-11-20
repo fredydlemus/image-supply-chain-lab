@@ -9,6 +9,7 @@ INFO = {
     "build_source": os.getenv("BUILD_SOURCE", "unknown"),
 }
 
+
 class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path == "/healthz":
